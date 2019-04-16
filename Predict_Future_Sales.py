@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[17]:
 
 
 import numpy as np
@@ -28,10 +28,12 @@ get_ipython().run_line_magic('config', 'IPCompleter.greedy=True')
 import csv
 import time
 
+import scipy.stats as stats
 
-# #### Load the data sales train data.
 
-# In[6]:
+# #### Load the data sales train data
+
+# In[5]:
 
 
 items = pd.read_csv("C:\\Study\\530-MachineLearningI\\Project\\predict_future_sales\\items.csv")
@@ -106,10 +108,10 @@ item_cat[item_cat.item_category_id == 75]
 shops[shops.shop_id == 12]
 
 
-# #### Conclusion: The record which first appeared to be an outlier seems to be a genuine sale
+# #### Conclusion: The record which first appeared to be an outlier seems to be a genuine sale.
 # 
 
-# In[16]:
+# In[6]:
 
 
 # staging for further analysis
@@ -123,7 +125,7 @@ sales_train_sub.head(10)
 
 # #### Tableau Report
 
-# In[ ]:
+# In[2]:
 
 
 get_ipython().run_cell_magic('html', '', "<div class='tableauPlaceholder' id='viz1554949555004' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;sh&#47;shop_items_count-itemFilter&#47;Sheet3&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='shop_items_count-itemFilter&#47;Sheet3' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;sh&#47;shop_items_count-itemFilter&#47;Sheet3&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1554949555004');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>")
@@ -132,7 +134,7 @@ get_ipython().run_cell_magic('html', '', "<div class='tableauPlaceholder' id='vi
 # 
 # ### Approach 1: Decision Tree Classification
 
-# In[17]:
+# In[7]:
 
 
 monthly_sales=sales_train_sub.groupby(["date_block_num","shop_id","item_id"])["item_cnt_day"].agg({"item_cnt_day":"sum"})
@@ -249,7 +251,7 @@ Image(graph.create_png())
 # 
 # #### E.g. for shopid = 5, itemid = 4872, a model corresponding to combination 5_4872 will be trained and next month's item count will be predicted using the same model
 
-# In[26]:
+# In[8]:
 
 
 df = pd.DataFrame(sales_train,columns=['date','date_block_num','shop_id','item_id','item_price','item_cnt_day'])
@@ -257,7 +259,7 @@ df = pd.DataFrame(sales_train,columns=['date','date_block_num','shop_id','item_i
 
 # Taking shop 5 alone because of huge data and now, we are going to subset the item count for all months in this shop
 
-# In[27]:
+# In[9]:
 
 
 df=pd.DataFrame(df.loc[df['shop_id'] == 5])
@@ -266,7 +268,7 @@ df=pd.DataFrame(df.loc[df['shop_id'] == 5])
 # Get the unique shop_id's to subset. If we dont do the filter in the above step, below code will add all the shops in a list. 
 # For now, the list will only have 5
 
-# In[28]:
+# In[10]:
 
 
 shops=df['shop_id'].unique().tolist()
@@ -275,7 +277,7 @@ print(shops)
 
 # Creating a dictionary "shopdf" to refer to different shops subset of data, in our case it will show the data corresponding to shop 5
 
-# In[29]:
+# In[11]:
 
 
 shopdf={}
@@ -286,7 +288,7 @@ print(shopdf)
 
 # Created a dictionary "shopdf_agg" to refer to the aggreagated monthly count data of the items sold for shop 5
 
-# In[30]:
+# In[12]:
 
 
 shopdf_agg={}
@@ -304,7 +306,7 @@ print(shopdf_agg)
 # 
 # #### Created dictionary "shop_item" to list all the items in the shop and dictionary sh_itm_mn to subset the items in the given shop
 
-# In[31]:
+# In[14]:
 
 
 data_ideal_df = [[0, 0], [1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],
@@ -340,7 +342,7 @@ for shop in shops:
 # 4. Linearity (QQ Plots)
 #  
 
-# In[32]:
+# In[18]:
 
 
 print("Shapiro-Wilk Test for Normality. \n")
@@ -356,7 +358,7 @@ for i in model:
 #Every model has a p-value greater than 0.05 which suggests that the data is normally distributed
 
 
-# In[ ]:
+# In[19]:
 
 
 print("Check Correlation between variables to detect Multi-Collinearity. \n")
@@ -371,7 +373,7 @@ for i in model:
 # and multi-collinearity does not exists
 
 
-# In[ ]:
+# In[20]:
 
 
 ## Homoscedasticity
