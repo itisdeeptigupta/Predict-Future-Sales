@@ -29,7 +29,7 @@ import csv
 import time
 
 
-# #### Load the data sales train data
+# #### Load the data sales train data.
 
 # In[6]:
 
